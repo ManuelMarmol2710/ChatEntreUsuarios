@@ -1,0 +1,253 @@
+package Ingresodeusuariosdd;
+
+
+
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.*;
+
+import javax.swing.*;
+
+
+public class SegundaVentana extends JFrame {
+
+
+
+	private JPanel contentPane;
+
+	private JTextField textField, textField1,textField2,textField3,textField4,textField5;
+	private JLabel usuario,edad,genero,correo,ID,telefono;
+	private JButton botonagregar;
+	
+	private Connection connct;
+	
+	private PreparedStatement preSta;
+
+	private JButton btnNewButton_2;
+	
+	public SegundaVentana() {
+		
+	
+		setBounds(100, 100, 335, 432);
+		contentPane = new JPanel();
+		contentPane.setBackground(UIManager.getColor("Button.background"));
+	    setContentPane(contentPane);
+		
+		
+		usuario = new JLabel("Nombre:");
+		usuario.setBounds(10, 10, 100, 30);
+	    getContentPane().add(usuario);
+		
+		textField = new JTextField();
+		textField.setBounds(69, 15, 150, 20);
+		getContentPane().add(textField);
+		
+		
+		edad = new JLabel("Edad:");
+		edad.setBounds(10, 50, 68, 14);
+		getContentPane().add(edad);
+		
+		textField1 = new JTextField();
+		textField1.setBounds(69, 48, 150, 20);
+		getContentPane().add(textField1);
+
+		
+		genero = new JLabel("Genero:");
+		genero.setBounds(10, 75, 100, 30);
+	    getContentPane().add(genero);
+		
+		textField2 = new JTextField();
+		textField2.setBounds(69, 80, 150, 20);
+		getContentPane().add(textField2);
+		
+		
+		correo = new JLabel("Correo:");
+		correo.setBounds(10, 116, 46, 14);
+	    getContentPane().add(correo);
+		
+		textField3 = new JTextField();
+		textField3.setBounds(69, 116, 150, 20);
+		getContentPane().add(textField3);
+		
+		
+		ID = new JLabel("ID:");
+		ID.setBounds(10, 150, 46, 14);
+		getContentPane().add(ID);
+		
+		textField4 = new JTextField();
+		textField4.setBounds(69, 147, 150, 20);
+		getContentPane().add(textField4);
+
+		
+		 telefono = new JLabel("Telefono:");
+	     telefono.setBounds(10, 188, 122, 14);
+		 getContentPane().add(telefono);
+		
+		textField5 = new JTextField();
+		textField5.setBounds(69, 184, 150, 20);
+		getContentPane().add(textField5);
+		
+		
+		
+		
+		
+		
+		
+		botonagregar = new JButton("Agregar");
+		botonagregar.setBounds(21, 297, 89, 23);
+	    getContentPane().add(botonagregar);
+		botonagregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				 try { 
+						Socket sock1 = new Socket("192.168.115",8080);
+		                
+						Infousuario1 info = new Infousuario1();
+						
+						info.setTextfield(textField.getText());
+						info.setTextfield1(textField1.getText());
+						info.setTextField2(textField2.getText());
+						info.setTextField3(textField3.getText());
+						info.setTextField4(textField4.getText());
+						info.setTextField5(textField5.getText());
+						
+						ObjectOutputStream salidadatos =new ObjectOutputStream(sock1.getOutputStream());
+						salidadatos.writeObject(info);
+						
+						sock1.close();
+					
+						try {
+							connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+							   preSta = connct.prepareStatement("insert into chat1 values(?,?,?,?,?,?)");
+								preSta.setString(1,textField.getText());
+								preSta.setString(2,textField1.getText());
+								preSta.setString(3,textField2.getText());
+								preSta.setString(4,textField3.getText());
+								preSta.setString(5,textField4.getText());
+								preSta.setString(6,textField5.getText());
+								preSta.executeUpdate();
+								
+								
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}	
+						    
+						} catch (UnknownHostException e1) {
+						
+						e1.printStackTrace();
+					} catch (IOException e1) {
+										e1.printStackTrace();
+					System.out.println(e1.getMessage());}		
+				 try { 
+			    	 preSta.close();
+	            } catch (SQLException a) {
+	                a.printStackTrace();
+	            }
+				
+		  	}
+			
+			   
+		  });
+	   
+	  getContentPane().setLayout(null);
+	  
+	  JButton btnNewButton = new JButton("Agregar");
+	  btnNewButton.addActionListener(new ActionListener() {
+	  	public void actionPerformed(ActionEvent e) {
+	  		try { 
+				Socket sock1 = new Socket("192.168.0.115",8888);
+                
+				Infousuario1 info = new Infousuario1();
+				info.setTextfield(textField.getText());
+				info.setTextfield1(textField1.getText());
+				info.setTextField2(textField2.getText());
+				info.setTextField3(textField3.getText());
+				info.setTextField4(textField4.getText());
+				info.setTextField5(textField5.getText());
+				ObjectOutputStream salidadatos =new ObjectOutputStream(sock1.getOutputStream());
+				salidadatos.writeObject(info);
+				
+				sock1.close();
+
+				try {
+					connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+					   preSta = connct.prepareStatement("insert into chat1 values(?,?,?,?,?,?)");
+						preSta.setString(1,textField.getText());
+						preSta.setString(2,textField1.getText());
+						preSta.setString(3,textField2.getText());
+						preSta.setString(4,textField3.getText());
+						preSta.setString(5,textField4.getText());
+						preSta.setString(6,textField5.getText());
+						preSta.executeUpdate();
+						
+						
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}	
+	        } catch (UnknownHostException e1) {
+				
+				e1.printStackTrace();
+			} catch (IOException e1) {
+								e1.printStackTrace();
+			System.out.println(e1.getMessage());}		
+	  		 try { 
+		    	 preSta.close();
+            } catch (SQLException a) {
+                a.printStackTrace();
+            }
+	  	
+	  	}
+	  });
+	  btnNewButton.setBounds(208, 297, 89, 23);
+	  contentPane.add(btnNewButton);
+	  
+	  JLabel lblNewLabel = new JLabel("Para chat1:");
+	  lblNewLabel.setBounds(21, 272, 136, 14);
+	  contentPane.add(lblNewLabel);
+	  
+	  JLabel lblNewLabel_1 = new JLabel("Para chat2:");
+	  lblNewLabel_1.setBounds(208, 269, 76, 14);
+	  contentPane.add(lblNewLabel_1);
+	  
+	  btnNewButton_2 = new JButton("Conectar");
+	  btnNewButton_2.addActionListener(new ActionListener() {
+	  	public void actionPerformed(ActionEvent e) {
+	  	  Chat1historial uno = new  Chat1historial();
+	  		 uno.setVisible(true);
+	    	 uno.setBounds(0,0,750,400);
+	  	   Chat2historial dos = new  Chat2historial();
+	  	    dos.setVisible(true);
+	        dos.setBounds(0,0,750,400);
+}
+	  });
+	  btnNewButton_2.setBounds(21, 344, 89, 23);
+	  contentPane.add(btnNewButton_2);
+	  
+	}
+	 
+	
+
+	
+	public static void main(String[] ar) {
+		SegundaVentana ven = new SegundaVentana();
+	    	   ven.setVisible(true);
+	    	   ven.setBounds(0,0,350,400);
+	    	   ven.setVisible(true);  
+	    	   chatuno uno = new chatuno();
+		  		 uno.setVisible(true);
+		    	 uno.setBounds(0,0,750,400);
+		  	   chatdos dos = new chatdos();
+		  	    dos.setVisible(true);
+	 	        dos.setBounds(0,0,750,400);
+		
+		}
+	
+		
+	}
