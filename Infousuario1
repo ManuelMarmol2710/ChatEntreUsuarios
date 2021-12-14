@@ -30,6 +30,7 @@ import java.io.Serializable;
 
 	public String getTextField3() {
 		return textField3;
+	
 	}
 
 	public void setTextField3(String textField3) {
