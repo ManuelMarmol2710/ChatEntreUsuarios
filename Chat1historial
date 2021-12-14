@@ -1,0 +1,279 @@
+package Ingresodeusuariosdd;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import javax.swing.border.EmptyBorder;
+
+
+public class Chat1historial extends JFrame implements Runnable {
+
+	private JPanel contentPane;
+	
+
+
+	
+	private JTextField textField_12, textField_11;
+    private Connection connct;
+    private PreparedStatement preSta;
+	
+	 private JList<String> list;
+	 private JList<String> list_1;
+
+	public Chat1historial() {
+		setTitle("Chat1");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 804, 359);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnNewButton = new JButton("Enviar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		
+
+				  try {
+							Socket sock = new Socket("192.168.0.115",7777);
+							Infousuario1 info = new Infousuario1 ();
+							info.setTextField_11(textField_11.getText());
+							info.setTextField_12(textField_12.getText());
+							
+							ObjectOutputStream salidadatos =new ObjectOutputStream(sock.getOutputStream());
+							salidadatos.writeObject(info);
+							 
+							Socket socka = new Socket("192.168.0.115",7070);
+						       Infousuario1 info4 = new Infousuario1 ();
+								info4.setTextField_11(textField_11.getText());
+								info4.setTextField_12(textField_12.getText());
+								ObjectOutputStream salidadatosss =new ObjectOutputStream(socka.getOutputStream());
+								salidadatosss.writeObject(info4);
+								sock.close();
+						        socka.close();
+						      
+						        try {
+									connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+									   preSta = connct.prepareStatement("insert into chat2 values(?,?)");
+										preSta.setString(1,textField_12.getText());
+										preSta.setString(2,textField_11.getText());
+										preSta.executeUpdate();
+								} catch (SQLException e1) {
+									e1.printStackTrace();
+								}	
+								  
+
+				  } catch (UnknownHostException e1) {
+							
+							e1.printStackTrace();
+						} catch (IOException e1) {
+											e1.printStackTrace();
+						System.out.println(e1.getMessage());
+						}		
+			 try { 
+				    	connct.close() ;
+					  preSta.close();
+		            } catch (SQLException a) {
+		                a.printStackTrace();
+		            }
+      } 
+		});
+		btnNewButton.setBounds(10, 286, 89, 23);
+		contentPane.add(btnNewButton);
+		
+		textField_11 = new JTextField();
+		textField_11.setBounds(111, 287, 603, 20);
+		contentPane.add(textField_11);
+		textField_11.setColumns(10);
+		
+		JButton btnNewButton_1 = new JButton("Conectar");
+		btnNewButton_1.setBounds(625, 19, 89, 23);
+		contentPane.add(btnNewButton_1);
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Chat1historial u = new Chat1historial();
+				u.lista(textField_12.getText(), list_1);
+			    
+			
+			
+			}	
+			
+			
+		});
+		textField_12 = new JTextField();
+		textField_12.setBounds(297, 20, 186, 20);
+		contentPane.add(textField_12);
+		textField_12.setColumns(10);
+		
+		list = new JList<String>();
+		list.setBounds(20, 53, 358, 225);
+		contentPane.add(list);
+		
+	
+Thread hilo = new Thread(this);
+		
+		hilo.start();
+		JButton btnNewButton_3 = new JButton("Chat");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Chat1historial p = new Chat1historial();
+				p.listachat(textField_12.getText(), list);
+			}
+		});
+		btnNewButton_3.setBounds(21, 19, 89, 23);
+		contentPane.add(btnNewButton_3);
+		
+		list_1 = new JList();
+		list_1.setBounds(404, 53, 310, 225);
+		contentPane.add(list_1);
+		
+		
+        
+	
+	
+	}
+	
+	@Override
+	public void run() {
+		try {
+			
+			ServerSocket servidor = new ServerSocket(7777);
+		   
+		    	   
+				String textField_9,TextField_11;
+				Infousuario1 info;
+		
+				
+	
+				DefaultListModel<String> modelo = new DefaultListModel<String>();
+				while (true) {
+					
+					Socket socka =servidor.accept();
+					ObjectInputStream entradaa = new ObjectInputStream(socka.getInputStream());
+					info = (Infousuario1) entradaa.readObject();
+				   
+				    TextField_11 = info.getTextField_11();
+				   
+				    textField_9 = info.getTextField_9();
+				
+				    modelo.addElement(TextField_11);
+				    modelo.addElement(textField_9);
+				    list.setModel(modelo);
+					 
+					 
+				
+					 
+					}
+		    } catch (IOException | ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		
+	
+	}	
+
+
+	
+
+
+public void lista (String valor, JList<String> jList) {
+    Statement  Statementt = null;
+	Connection connct = null;
+	ResultSet rese = null;
+	 try {
+		DefaultListModel<String> modelo = new DefaultListModel<String>();
+		connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+	    Statementt = connct.createStatement();
+         rese = Statementt.executeQuery("SELECT Nombre, Edad, Genero, Correo, ID, Telefono " +  "FROM chat1 WHERE Nombre LIKE '%"+valor+"%'" );
+         	
+         
+         while (rese.next()) {
+        	 String nombre = rese.getString("Nombre");
+             modelo.addElement(nombre);
+             String edad = rese.getString("Edad");
+             modelo.addElement(edad);
+             String Genero = rese.getString("Genero");
+             modelo.addElement(Genero);
+             String Correo = rese.getString("Correo");
+             modelo.addElement(Correo);
+             String ID = rese.getString("ID");
+             modelo.addElement(ID);
+             String Telefono = rese.getString("Telefono");
+             modelo.addElement(Telefono);
+         }
+jList.setModel(modelo);
+	 
+	 
+	 
+	 }catch(SQLException sqle) {
+
+}
+	
+}
+public void listachat (String valor, JList<String> jList) {
+    Statement  Statementt = null;
+	Connection connct = null;
+	ResultSet rese = null;
+	 try {
+		DefaultListModel<String> modelo = new DefaultListModel<String>();
+		connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+	    Statementt = connct.createStatement();
+         rese = Statementt.executeQuery("SELECT Alias, Chat " +  "FROM chat2 WHERE Alias LIKE '%"+valor+"%'" );
+         	
+         
+         while (rese.next()) {
+        	 String alias = rese.getString("Alias");
+             modelo.addElement(alias);
+             String chat = rese.getString("Chat");
+             modelo.addElement(chat);
+            
+         }
+jList.setModel(modelo);
+	 
+	 
+	 
+	 }catch(SQLException sqle) {
+try { 
+	connct.close() ;
+  preSta.close();
+} catch (SQLException a) {
+    a.printStackTrace();
+}
+}
+	
+}	 
+	 
+	 
+}
+
+	
+	
+
+	
+					
+		
+				
+				
+				
+				
+			
