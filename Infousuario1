@@ -1,0 +1,124 @@
+import java.io.Serializable;
+ class Infousuario1 implements Serializable {
+	
+	private String textField,textField1,textField2,textField3,textField4,textField5,textField9,textField11,textField_1,textField_2,textField_3,textField_4,textField_6,textField_7;;
+
+	public String getTextfield() {
+		return textField;
+	}
+
+	public void setTextfield(String textfield) {
+		this.textField = textfield;
+	}
+
+	public String getTextfield1() {
+		return textField1;
+	}
+
+	public void setTextfield1(String textfield1) {
+		this.textField1 = textfield1;
+	}
+
+
+	public String getTextField2() {
+		return textField2;
+	}
+
+	public void setTextField2(String textField2) {
+		this.textField2 = textField2;
+	}
+
+	public String getTextField3() {
+		return textField3;
+	}
+
+	public void setTextField3(String textField3) {
+		this.textField3 = textField3;
+	}
+
+	public String getTextField4() {
+		return textField4;
+	}
+
+	public void setTextField4(String textField4) {
+		this.textField4 = textField4;
+	}
+
+	public String getTextField5() {
+		return textField5;
+	}
+
+	public void setTextField5(String textField5) {
+		this.textField5 = textField5;
+	}
+	public String getTexto() {
+	return textField9;
+}
+
+public void setTexto(String texto) {
+	this.textField9 = texto;
+}
+
+public String getTextField11() {
+	return textField11;
+}
+
+public void setTextField11(String textField11) {
+	this.textField11 = textField11;
+}
+
+public String getTextField_1() {
+	return textField_1;
+}
+
+public void setTextField_1(String textField_1) {
+	this.textField_1 = textField_1;
+}
+
+public String getTextField_2() {
+	return textField_2;
+}
+
+public void setTextField_2(String textField_2) {
+	this.textField_2 = textField_2;
+}
+
+public String getTextField_3() {
+	return textField_3;
+}
+
+public void setTextField_3(String textField_3) {
+	this.textField_3 = textField_3;
+}
+
+public String getTextField_4() {
+	return textField_4;
+}
+
+public void setTextField_4(String textField_4) {
+	this.textField_4 = textField_4;
+}
+public String getTextField_6() {
+	return textField_6;
+}
+
+public void setTextField_6(String textField_6) {
+	this.textField_6 = textField_6;
+}
+public String getTextField_7() {
+	return textField_7;
+}
+
+public void setTextField_7(String textField_7) {
+	this.textField_7 = textField_7;
+}
+
+
+
+
+
+}
+
+
+
+
