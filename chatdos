@@ -1,0 +1,236 @@
+package Ingresodeusuariosdd;
+
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class chatdos extends JFrame implements Runnable{
+
+	private JPanel contentPane;
+    private JTextArea textArea;
+    private JTextField textField_2,textField_4,textField11;
+    private Connection connct;
+    private PreparedStatement preSta;
+    private JButton btnNewButton_1;
+    
+    public chatdos() {
+		setTitle("Chat2");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 564, 398);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnNewButton = new JButton("Enviar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+			  try {
+						Socket sock = new Socket("192.168.0.115",8888);
+						Infousuario1 info = new Infousuario1 ();
+						info.setTexto(textField11.getText());
+						info.setTextField_4(textField_4.getText());
+						ObjectOutputStream salidadatos =new ObjectOutputStream(sock.getOutputStream());
+						salidadatos.writeObject(info);
+						  
+			        Socket socka = new Socket("192.168.0.115",8080);
+			       Infousuario1 info4 = new Infousuario1 ();
+					info4.setTexto(textField11.getText());
+					info4.setTextField_4(textField_4.getText());
+					ObjectOutputStream salidadatosss =new ObjectOutputStream(socka.getOutputStream());
+					salidadatosss.writeObject(info4);
+					sock.close();
+			        socka.close();
+				  
+			        try {
+						connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+						   preSta = connct.prepareStatement("insert into chat2 values(?,?)");
+						   preSta.setString(1,textField_4.getText());
+						   preSta.setString(2,textField11.getText());
+						   preSta.executeUpdate();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}	
+		       
+			        try { 
+				    	 preSta.close();
+		            } catch (SQLException a) {
+		                a.printStackTrace();
+		            }
+			  
+			  
+			  
+			  
+			  
+			  
+			  } catch (UnknownHostException e1) {
+						
+						e1.printStackTrace();
+					} catch (IOException e1) {
+										e1.printStackTrace();
+					System.out.println(e1.getMessage());
+					}		
+	
+			
+	
+			}
+		});
+	
+	btnNewButton.setBounds(10, 316, 89, 23);
+		contentPane.add(btnNewButton);
+		
+		textField_2 = new JTextField();
+		textField_2.setBounds(326, 13, 169, 17);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("Escriba el nombre del usuario que desea conectarse:");
+		lblNewLabel.setBounds(10, 12, 338, 21);
+		contentPane.add(lblNewLabel);;
+		
+		
+	
+		Thread hilo = new Thread(this);
+		
+		hilo.start();
+	
+		textArea = new JTextArea();
+		textArea.setBounds(10, 71, 485, 224);
+		contentPane.add(textArea);
+		
+		textField11 = new JTextField();
+		textField11.setText("");
+		textField11.setBounds(109, 317, 287, 20);
+		contentPane.add(textField11);
+		textField11.setColumns(10);
+		
+		btnNewButton_1 = new JButton("Conexion");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Socket sock;
+				try {
+					sock = new Socket("192.168.0.115",8888);
+					Infousuario1 info = new Infousuario1 ();
+				    info.setTextField_2(textField_2.getText());
+					ObjectOutputStream salidadatos =new ObjectOutputStream(sock.getOutputStream());
+					salidadatos.writeObject(info);
+				
+					try {
+						connct = DriverManager.getConnection("jdbc:mysql://localhost/chat", "root", "");
+						   preSta.executeUpdate();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}	
+				} catch (UnknownHostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					 try { 
+				    	 preSta.close();
+		            } catch (SQLException a) {
+		                a.printStackTrace();
+		            }	
+			}
+			}
+		});
+		btnNewButton_1.setBounds(406, 316, 89, 23);
+		contentPane.add(btnNewButton_1);
+	
+	 JLabel	lblNewLabel_1 = new JLabel("Nombre o Alias:");
+		lblNewLabel_1.setBounds(211, 46, 272, 14);
+		contentPane.add(lblNewLabel_1);
+		
+		textField_4 = new JTextField();
+		textField_4.setColumns(10);
+		textField_4.setBounds(326, 44, 169, 17);
+		contentPane.add(textField_4);
+		
+	
+	
+	
+	
+	
+	}
+	
+	
+	
+	@Override
+	public void run() {
+		try {
+			
+			ServerSocket servidor = new ServerSocket(8888);
+		   
+		    	   
+				String textField, textField1,textField9,textField2,textField3,textField4,textField5,textField_2,textField_3;
+				
+				Infousuario1 info;
+		
+				for (int p = 0 ; p < 1 ; p++) {
+					Socket socka =servidor.accept();
+				  
+					  ObjectInputStream entradaa = new ObjectInputStream(socka.getInputStream());
+					  info = (Infousuario1) entradaa.readObject();
+			              textField = info.getTextfield();
+						  textField1 = info.getTextfield1();
+				          textField2 = info.getTextField2();
+					      textField3 = info.getTextField3();
+					      textField4 = info.getTextField4();
+					      textField5 = info.getTextField5();
+					
+					      textArea.append("\n" + textField +  " - " + textField1 + " - " + textField2 + " - " + textField3 + " - " + textField4 + " - " + textField5);
+					      textArea.append("\n Eres null en el chat");	
+					      socka.close();
+					}		
+		
+				for(int p = 0 ; p < 1 ; p++) {
+					Socket socka =servidor.accept();
+					ObjectInputStream entradaa = new ObjectInputStream(socka.getInputStream());
+					info = (Infousuario1) entradaa.readObject();
+					textField_2 = info.getTextField_2();
+				    JOptionPane.showMessageDialog(null, "Se ha establecido conexion con: " + textField_2 );		 
+					
+					
+				}			
+	
+				
+				while (true) {
+					Socket socka =servidor.accept();
+					ObjectInputStream entradaa = new ObjectInputStream(socka.getInputStream());
+					info = (Infousuario1) entradaa.readObject();
+					textField9  = info.getTexto();
+					 textField_3 = info.getTextField_3();
+					 textArea.append("\n"  + textField_3 +  ": " + textField9  );
+					 
+					}
+		    } catch (IOException | ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		
+	
+	}
+	}
+
